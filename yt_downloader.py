@@ -242,26 +242,26 @@ class YouTubeDownloader:
         return True
 
     def _create_ydl_options(self, save_folder: str, quality: str) -> dict:
+        video_quality_id = config.video_quality_id[quality]
         ydl_opts = {
-            "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),  # 保存先とファイル名の指定
-            "format": f"bestvideo[vcodec=h264][height<={int(quality)}][ext=mp4]+bestaudio[acodec=aac][ext=m4a]"
-                    f"/best[ext=mp4]",  # H.264 + AAC に限定
-            "merge_output_format": "mp4",  # 出力形式を MP4 に統一
-            "verbose": True,               # 詳細なログを有効化（デバッグ用）
-            "no_warnings": False,          # 警告を表示
-            "progress_hooks": [self.update_progress],  # 進捗更新用フック
+            "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
+            "format": f"{video_quality_id}+140/best",
+            "merge_output_format": "mp4",
+            "verbose": True,
+            "no_warnings": False,
+            "progress_hooks": [self.update_progress],
             "postprocessors": [
                 {
-                    "key": "FFmpegVideoConvertor",      # 出力形式を MP4 に変換
-                    "preferedformat": "mp4",           # MP4 を優先
+                    "key": "FFmpegVideoConvertor",
+                    "preferedformat": "mp4",
                 },
                 {
-                    "key": "EmbedThumbnail",           # サムネイルの埋め込み（必要に応じて無効化）
-                }
+                    "key": "EmbedThumbnail",
+                },
             ],
             "quiet": False,
         }
-        
+
         tool_manager_instance = tool_manager.ToolManager()
         ffmpeg_path = tool_manager_instance.save_dir / "ffmpeg"
         ydl_opts["ffmpeg_location"] = str(ffmpeg_path)

@@ -1,13 +1,11 @@
 quality_options = [
-    "4320p (8K)",
-    "2160p (4K)",
-    "1440p (2K, WQHD)",
     "1080p (Full HD)",
     "720p (HD)",
     "480p (SD)",
     "360p (低画質)",
 ]
-quality_default_idx = 3
+video_quality_id = {"1080": 137, "720": 136, "480": 135, "360": 134}
+quality_default_idx = 0
 
 ffmpeg_url = r"https://evermeet.cx/ffmpeg/ffmpeg-118315-g4f3c9f2f03.zip"
 ffprobe_url = r"https://evermeet.cx/ffmpeg/ffprobe-118315-g4f3c9f2f03.zip"
