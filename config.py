@@ -4,7 +4,6 @@ quality_options = [
     "480p (SD)",
     "360p (低画質)",
 ]
-video_quality_id = {"1080": 137, "720": 136, "480": 135, "360": 134}
 quality_default_idx = 0
 
 ffmpeg_url = r"https://evermeet.cx/ffmpeg/ffmpeg-118315-g4f3c9f2f03.zip"

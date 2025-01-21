@@ -242,10 +242,9 @@ class YouTubeDownloader:
         return True
 
     def _create_ydl_options(self, save_folder: str, quality: str) -> dict:
-        video_quality_id = config.video_quality_id[quality]
         ydl_opts = {
             "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
-            "format": f"{video_quality_id}+140/best",
+            "format": f"bv*[vcodec*=avc1][height<={quality}]+140/best",
             "merge_output_format": "mp4",
             "verbose": True,
             "no_warnings": False,
