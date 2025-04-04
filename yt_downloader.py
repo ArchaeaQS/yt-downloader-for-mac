@@ -91,7 +91,12 @@ class YouTubeDownloaderUI:
         self.download_button = tk.Button(self.root, text="ダウンロード開始", command=self.downloader.start_download)
         self.download_button.grid(row=5, column=1, padx=5, pady=5)
 
-        self.stop_button = tk.Button(self.root, text="停止", command=self.downloader.stop_download, state=tk.DISABLED)
+        self.stop_button = tk.Button(
+            self.root,
+            text="停止",
+            command=self.downloader.stop_download,
+            state=tk.DISABLED,
+        )
         self.stop_button.grid(row=5, column=2, padx=5, pady=5)
 
     def choose_save_folder(self) -> None:
@@ -117,7 +122,7 @@ class YouTubeDownloaderUI:
             cookie_dir = Path.home() / "Library" / "Application Support" / "yt-downloader"
             cookie_dir.mkdir(exist_ok=True, parents=True)
             cookie_file = cookie_dir / "cookies.txt"
-            cookie_file.write_text(text_area.get("1.0", tk.END), encoding="utf-8")
+            cookie_file.write_text(text_area.get("1.0", tk.END).rstrip(), encoding="utf-8")
             os.chmod(str(cookie_file), 0o600)  # ユーザーのみ読み書き可能に設定
             cookie_window.destroy()
 
@@ -244,7 +249,8 @@ class YouTubeDownloader:
     def _create_ydl_options(self, save_folder: str, quality: str) -> dict:
         ydl_opts = {
             "outtmpl": os.path.join(save_folder, "%(title)s.%(ext)s"),
-            "format": f"bv*[vcodec*=avc1][height<={quality}]+bestaudio[ext=m4a]/best",
+            "format": f"bv*[vcodec*=avc1][height<={quality}]+bestaudio[ext=m4a]/"
+            f"bv*[vcodec*=avc1][height<={quality}]+234/best",
             "merge_output_format": "mp4",
             "no_check_certificates": True,
             "verbose": True,
@@ -267,7 +273,7 @@ class YouTubeDownloader:
         ydl_opts["ffmpeg_location"] = str(ffmpeg_path)
 
         cookie_file = Path.home() / "Library" / "Application Support" / "yt-downloader" / "cookies.txt"
-        if cookie_file.exists():
+        if cookie_file.exists() and cookie_file.read_text(encoding="utf-8").strip():
             ydl_opts["cookiefile"] = str(cookie_file)
 
         return ydl_opts
@@ -277,7 +283,10 @@ class YouTubeDownloader:
         self.root.after(0, self.ui.progress_bar.grid_remove)
 
     def _show_error_message(self, error_msg: str) -> None:
-        self.root.after(0, lambda: messagebox.showerror("エラー", f"動画のダウンロードに失敗しました: {error_msg}"))
+        self.root.after(
+            0,
+            lambda: messagebox.showerror("エラー", f"動画のダウンロードに失敗しました: {error_msg}"),
+        )
         self.root.after(0, self.ui.progress_bar.grid_remove)
 
     def _cleanup_after_download(self) -> None:
@@ -308,7 +317,8 @@ class YouTubeDownloader:
 
                 self.root.after(0, lambda: self.ui.state.progress_var.set(percent))
                 self.root.after(
-                    0, lambda: self.ui.status_label.config(text=f"ダウンロード中: {percent:.1f}%, 速度: {speed_str}")
+                    0,
+                    lambda: self.ui.status_label.config(text=f"ダウンロード中: {percent:.1f}%, 速度: {speed_str}"),
                 )
         except Exception:
             pass
